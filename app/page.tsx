@@ -1,10 +1,18 @@
 import Banner from "@/components/banner.client";
 import Card from "@/components/card.server";
+import { fetchCoffeeStores } from "@/lib/coffee-stores";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+async function getStores() {
+  return await fetchCoffeeStores();
+}
+
+export default async function Home() {
   const storeId = "dark-horse-coffee";
+  const { features } = await getStores();
+
+  // console.log("stores", stores);
 
   const dummyData = [
     {
