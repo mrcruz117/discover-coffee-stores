@@ -1,10 +1,18 @@
-import { fetchCoffeeStore } from "@/lib/coffee-stores";
+import { fetchCoffeeStore, fetchCoffeeStores } from "@/lib/coffee-stores";
+import { CoffeeStoreType } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 async function getStore(id: string) {
   return await fetchCoffeeStore(id);
+}
+
+export async function generateStaticParams() {
+  const stores = await fetchCoffeeStores();
+  return stores.map((store: CoffeeStoreType) => ({
+    id: store.id,
+  }));
 }
 
 export default async function page(props: { params: { id: string } }) {
@@ -14,11 +22,9 @@ export default async function page(props: { params: { id: string } }) {
 
   const store = await getStore(id);
   if (!store) {
-    // handle the case where store is undefined
-    // for example, you could return from the function or throw an error
-    return;
+    // handle the case where store is undefined, e.g., return a loading screen or error message
+    return <div>Loading...</div>;
   }
-  const { name = "", imgUrl = "", address = "" } = store;
 
   console.log("store: ", store);
   return (
@@ -29,10 +35,10 @@ export default async function page(props: { params: { id: string } }) {
             <Link href="/">← Back to home</Link>
           </div>
           <div className="my-4">
-            <h1 className="text-4xl">{name}</h1>
+            <h1 className="text-4xl">{store.name}</h1>
           </div>
           <Image
-            src={imgUrl}
+            src={store.imgUrl}
             width={740}
             height={360}
             className="max-h-[420px] min-w-full max-w-full rounded-lg border-2 sepia lg:max-w-[470px] "
@@ -41,7 +47,7 @@ export default async function page(props: { params: { id: string } }) {
         </div>
 
         <div className={`glass mt-12 flex-col rounded-lg p-4 lg:mt-48`}>
-          {address && (
+          {store.address && (
             <div className="mb-4 flex">
               {/* <Image
                 src="/static/icons/places.svg"
@@ -49,7 +55,7 @@ export default async function page(props: { params: { id: string } }) {
                 height="24"
                 alt="places icon"
               /> */}
-              <p className="pl-2">{address}</p>
+              <p className="pl-2">{store.address}</p>
             </div>
           )}
         </div>
