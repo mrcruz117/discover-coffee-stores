@@ -16,6 +16,7 @@ export default function NearbyCoffeeStores() {
         handleOnClick={handleOnClick}
         buttonText={isFindingLocation ? "Loading..." : "View Stores Nearby"}
       />
+      {locationErrorMsg && <div>{locationErrorMsg}</div>}
     </div>
   );
 }
