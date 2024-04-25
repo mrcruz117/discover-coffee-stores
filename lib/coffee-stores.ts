@@ -1,38 +1,62 @@
 import { MapboxType } from "@/types";
 
-const transformCoffeeData = (store: MapboxType) => {
-  return {
-    id: store.id || "no-id",
-    name: store.text || "No name provided",
-    address: store.properties?.address || "No address provided",
-    imgUrl: `https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80`,
-  };
-};
-
-export const fetchCoffeeStores = async () => {
+const getListOfCoffeeStorePhotos = async () => {
   try {
-    const res = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/coffee.json?limit=6&proximity=139.77377541514397%2C35.67164056369268&access_token=${process.env.MAPBOX_API}`
+    const response = await fetch(
+      `https://api.unsplash.com/search/photos/?client_id=${process.env.UNSPLASH_ACCESS_KEY}&query="coffee shop"&page=1&perPage=10&orientation=landscape`
     );
-
-    const data = await res.json();
-
-    return data.features.map((store: MapboxType) => transformCoffeeData(store));
+    const photos = await response.json();
+    const results = photos?.results || [];
+    return results?.map((result: { urls: any }) => result.urls["small"]);
   } catch (error) {
-    console.error("Error fetching coffee stores", error);
+    console.error("Error retrieving a photo", error);
   }
 };
 
-export const fetchCoffeeStore = async (id: string) => {
+const transformCoffeeData = (
+  idx: number,
+  result: MapboxType,
+  photos: Array<string>
+) => {
+  return {
+    id: result.id,
+    address: result.properties?.address || "",
+    name: result.text,
+    imgUrl: photos.length > 0 ? photos[idx] : "",
+  };
+};
+
+export const fetchCoffeeStores = async (longLat: string, limit: number) => {
   try {
-    const res = await fetch(
-      `https://api.mapbox.com/geocoding/v5/mapbox.places/${id}.json?access_token=${process.env.MAPBOX_API}`
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/coffee.json?limit=${limit}&proximity=${longLat}&access_token=${process.env.MAPBOX_API}`
     );
+    const data = await response.json();
+    const photos = await getListOfCoffeeStorePhotos();
 
-    const data = await res.json();
-
-    return transformCoffeeData(data.features[0]);
+    return data.features.map((result: MapboxType, idx: number) =>
+      transformCoffeeData(idx, result, photos)
+    );
   } catch (error) {
-    console.error("Error fetching coffee store", error);
+    console.error("Error while fetching coffee stores", error);
+  }
+};
+
+export const fetchCoffeeStore = async (id: string, queryId: string) => {
+  try {
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${id}.json?proximity=ip&access_token=${process.env.MAPBOX_API}`
+    );
+    const data = await response.json();
+    const photos = await getListOfCoffeeStorePhotos();
+
+    console.log("queryId!: ", queryId!);
+
+    const coffeeStore = data.features.map((result: MapboxType, idx: number) =>
+      transformCoffeeData(parseInt(queryId), result, photos)
+    );
+    return coffeeStore.length > 0 ? coffeeStore[0] : {};
+  } catch (error) {
+    console.error("Error while fetching coffee stores", error);
   }
 };

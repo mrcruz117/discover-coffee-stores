@@ -7,7 +7,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 async function getStores() {
-  return await fetchCoffeeStores();
+  // Tokyo
+  const TOKYO_LONG_LAT = "139.77377541514397%2C35.67164056369268";
+  return await fetchCoffeeStores(TOKYO_LONG_LAT, 6);
 }
 
 export default async function Home() {
@@ -20,17 +22,17 @@ export default async function Home() {
         <NearbyCoffeeStores />
         <div className="mt-20">
           <h2 className="mt-8 pb-8 text-4xl font-bold text-white">
-            Toronto Stores
+            Tokyo Stores
           </h2>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-2 lg:grid-cols-3 lg:gap-6">
-          {coffeeStores.map((store: CoffeeStoreType) => (
+          {coffeeStores.map((store: CoffeeStoreType, idx: number) => (
             <Card
               key={`${store.name}-${store.id}`}
               name={store.name}
               imgUrl={store.imgUrl}
-              href={`/coffee-store/${store.id}`}
+              href={`/coffee-store/${store.id}?id=${idx}`}
             />
           ))}
         </div>
