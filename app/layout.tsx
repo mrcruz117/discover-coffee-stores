@@ -15,12 +15,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={ibmPlexSans.className}>{children}</body>
+      <body className={ibmPlexSans.className}>
+        {children}
+        <footer className="mt-auto bg-violet-300 py-6 text-lg text-black">
+          <div className="text-center">By Michael Cruz</div>
+        </footer>
+      </body>
     </html>
   );
 }
