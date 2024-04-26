@@ -1,3 +1,5 @@
+import { AirtableRecordType } from "@/types";
+
 var Airtable = require("airtable");
 var base = new Airtable({ apiKey: process.env.AIRTABLE_TOKEN }).base(
   "appYAR14pbpqCcymG"
@@ -12,9 +14,22 @@ export const findRecordByFilter = async (id: string) => {
     })
     .firstPage();
 
-  const allRecords = findRecords.map((record) => {
-    return record;
+  const allRecords = findRecords.map((record: AirtableRecordType) => {
+    return {
+      recordId: record.id,
+      ...record.fields,
+    };
   });
 
-  return findRecords;
+  return allRecords;
+};
+
+export const createCoffeeStore = async (id: string) => {
+  const records = await findRecordByFilter(id);
+
+  if (records.length > 0) {
+    // create
+  } else {
+    // return
+  }
 };
