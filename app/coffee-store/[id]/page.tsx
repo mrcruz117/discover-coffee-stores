@@ -1,4 +1,4 @@
-import { findRecordByFilter } from "@/lib/airtable";
+import { createCoffeeStore } from "@/lib/airtable";
 import { fetchCoffeeStore, fetchCoffeeStores } from "@/lib/coffee-stores";
 import { CoffeeStoreType } from "@/types";
 import Image from "next/image";
@@ -7,7 +7,7 @@ import React from "react";
 
 async function getData(id: string, queryId: string) {
   const coffeeStoreFromMapbox = await fetchCoffeeStore(id, queryId);
-  const createCoffeeStore = await findRecordByFilter(id);
+  const _createCoffeeStore = await createCoffeeStore(coffeeStoreFromMapbox, id);
 
   console.log("createCoffeeStore: ", createCoffeeStore);
 
