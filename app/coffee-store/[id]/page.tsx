@@ -1,3 +1,4 @@
+import Upvote from "@/components/upvote.client";
 import { createCoffeeStore } from "@/lib/airtable";
 import { fetchCoffeeStore, fetchCoffeeStores } from "@/lib/coffee-stores";
 import { CoffeeStoreType } from "@/types";
@@ -67,15 +68,16 @@ export default async function Page(props: {
         <div className={`glass mt-12 flex-col rounded-lg p-4 lg:mt-48`}>
           {coffeeStore.address && (
             <div className="mb-4 flex">
-              {/* <Image
-                src="/static/icons/places.svg"
+              <Image
+                src="/static/places.svg"
                 width="24"
                 height="24"
                 alt="places icon"
-              /> */}
+              />
               <p className="pl-2">{coffeeStore.address}</p>
             </div>
           )}
+          <Upvote id={""} voting={0} />
         </div>
       </div>
     </div>
