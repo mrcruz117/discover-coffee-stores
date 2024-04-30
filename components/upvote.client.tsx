@@ -39,7 +39,11 @@ export default function Upvote({ voting, id }: { voting: number; id: string }) {
   //   const [state, dispatch] = useFormState(upvoteAction, initialState);
 
   return (
-    <form action={upvoteAction}>
+    <form
+      action={() => {
+        upvoteAction(id);
+      }}
+    >
       <>
         <div className="mb-6 flex">
           <Image
