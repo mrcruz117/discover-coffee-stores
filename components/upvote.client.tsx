@@ -1,5 +1,6 @@
 "use client";
 
+import { upvoteAction } from "@/actions";
 import Image from "next/image";
 
 import { useFormState, useFormStatus } from "react-dom";
@@ -38,14 +39,19 @@ export default function Upvote({ voting, id }: { voting: number; id: string }) {
   //   const [state, dispatch] = useFormState(upvoteAction, initialState);
 
   return (
-    // <form action={dispatch}>
-    <>
-      <div className="mb-6 flex">
-        <Image src="/static/star.svg" width="24" height="24" alt="star icon" />
-        <p className="pl-2">{voting}</p>
-      </div>
-      <SubmitButton />
-    </>
-    // </form>
+    <form action={upvoteAction}>
+      <>
+        <div className="mb-6 flex">
+          <Image
+            src="/static/star.svg"
+            width="24"
+            height="24"
+            alt="star icon"
+          />
+          <p className="pl-2">{voting}</p>
+        </div>
+        <SubmitButton />
+      </>
+    </form>
   );
 }
