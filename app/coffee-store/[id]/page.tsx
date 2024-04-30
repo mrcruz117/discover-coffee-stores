@@ -12,12 +12,12 @@ async function getData(id: string, queryId: string) {
 
   console.log("createCoffeeStore: ", createCoffeeStore);
 
-  // const voting = _createCoffeeStore ? _createCoffeeStore[0].voting : 0;
+  const voting = _createCoffeeStore ? _createCoffeeStore[0].voting : 0;
 
   return coffeeStoreFromMapbox
     ? {
         ...coffeeStoreFromMapbox,
-        // voting,
+        voting,
       }
     : {};
 }
@@ -40,11 +40,8 @@ export default async function Page(props: {
   } = props;
 
   const coffeeStore = await getData(id, queryId);
-  if (!coffeeStore) {
-    // handle the case where store is undefined, e.g., return a loading screen or error message
-    return <div>Loading...</div>;
-  }
 
+  const { name = "", address = "", imgUrl = "", voting = 0 } = coffeeStore;
   console.log("store: ", coffeeStore);
   return (
     <div className="h-full pb-80">
@@ -54,10 +51,10 @@ export default async function Page(props: {
             <Link href="/">← Back to home</Link>
           </div>
           <div className="my-4">
-            <h1 className="text-4xl">{coffeeStore.name}</h1>
+            <h1 className="text-4xl">{name}</h1>
           </div>
           <Image
-            src={coffeeStore.imgUrl}
+            src={imgUrl}
             width={740}
             height={360}
             className="max-h-[420px] min-w-full max-w-full rounded-lg border-2 sepia lg:max-w-[470px] "
@@ -66,7 +63,7 @@ export default async function Page(props: {
         </div>
 
         <div className={`glass mt-12 flex-col rounded-lg p-4 lg:mt-48`}>
-          {coffeeStore.address && (
+          {address && (
             <div className="mb-4 flex">
               <Image
                 src="/static/places.svg"
@@ -74,10 +71,10 @@ export default async function Page(props: {
                 height="24"
                 alt="places icon"
               />
-              <p className="pl-2">{coffeeStore.address}</p>
+              <p className="pl-2">{address}</p>
             </div>
           )}
-          <Upvote id={""} voting={0} />
+          <Upvote id={""} voting={voting} />
         </div>
       </div>
     </div>
