@@ -1,32 +1,48 @@
+import Upvote from "@/components/upvote.client";
+import { createCoffeeStore } from "@/lib/airtable";
 import { fetchCoffeeStore, fetchCoffeeStores } from "@/lib/coffee-stores";
 import { CoffeeStoreType } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-async function getStore(id: string) {
-  return await fetchCoffeeStore(id);
-}
+async function getData(id: string, queryId: string) {
+  const coffeeStoreFromMapbox = await fetchCoffeeStore(id, queryId);
+  const _createCoffeeStore = await createCoffeeStore(coffeeStoreFromMapbox, id);
 
+  console.log("createCoffeeStore: ", createCoffeeStore);
+
+  const voting = _createCoffeeStore ? _createCoffeeStore[0].voting : 0;
+
+  return coffeeStoreFromMapbox
+    ? {
+        ...coffeeStoreFromMapbox,
+        voting,
+      }
+    : {};
+}
 export async function generateStaticParams() {
-  const stores = await fetchCoffeeStores();
-  return stores.map((store: CoffeeStoreType) => ({
-    id: store.id,
+  const TOKYO_LONG_LAT = "139.77377541514397%2C35.67164056369268";
+  const coffeeStores = await fetchCoffeeStores(TOKYO_LONG_LAT, 6);
+
+  return coffeeStores.map((coffeeStore: CoffeeStoreType) => ({
+    id: coffeeStore.id.toString(),
   }));
 }
 
-export default async function page(props: { params: { id: string } }) {
+export default async function Page(props: {
+  params: { id: string };
+  searchParams: { id: string };
+}) {
   const {
     params: { id },
+    searchParams: { id: queryId },
   } = props;
 
-  const store = await getStore(id);
-  if (!store) {
-    // handle the case where store is undefined, e.g., return a loading screen or error message
-    return <div>Loading...</div>;
-  }
+  const coffeeStore = await getData(id, queryId);
 
-  console.log("store: ", store);
+  const { name = "", address = "", imgUrl = "", voting = 0 } = coffeeStore;
+  console.log("store: ", coffeeStore);
   return (
     <div className="h-full pb-80">
       <div className="m-auto grid max-w-full px-12 py-12 lg:max-w-6xl lg:grid-cols-2 lg:gap-4">
@@ -35,10 +51,10 @@ export default async function page(props: { params: { id: string } }) {
             <Link href="/">← Back to home</Link>
           </div>
           <div className="my-4">
-            <h1 className="text-4xl">{store.name}</h1>
+            <h1 className="text-4xl">{name}</h1>
           </div>
           <Image
-            src={store.imgUrl}
+            src={imgUrl}
             width={740}
             height={360}
             className="max-h-[420px] min-w-full max-w-full rounded-lg border-2 sepia lg:max-w-[470px] "
@@ -47,17 +63,18 @@ export default async function page(props: { params: { id: string } }) {
         </div>
 
         <div className={`glass mt-12 flex-col rounded-lg p-4 lg:mt-48`}>
-          {store.address && (
+          {address && (
             <div className="mb-4 flex">
-              {/* <Image
-                src="/static/icons/places.svg"
+              <Image
+                src="/static/places.svg"
                 width="24"
                 height="24"
                 alt="places icon"
-              /> */}
-              <p className="pl-2">{store.address}</p>
+              />
+              <p className="pl-2">{address}</p>
             </div>
           )}
+          <Upvote id={id} voting={voting} />
         </div>
       </div>
     </div>
