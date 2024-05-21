@@ -36,26 +36,22 @@ export default function Upvote({ voting, id }: { voting: number; id: string }) {
     voting,
   };
 
-  //   const [state, dispatch] = useFormState(upvoteAction, initialState);
+  // @ts-expect-error
+  const [state, dispatch] = useFormState(upvoteAction, initialState);
 
   return (
-    <form
-      action={() => {
-        upvoteAction(id);
-      }}
-    >
-      <>
-        <div className="mb-6 flex">
-          <Image
-            src="/static/star.svg"
-            width="24"
-            height="24"
-            alt="star icon"
-          />
-          <p className="pl-2">{voting}</p>
-        </div>
-        <SubmitButton />
-      </>
+    <form action={dispatch}>
+      <div className="mb-6 flex">
+        <Image
+          src="/static/icons/star.svg"
+          width="24"
+          height="24"
+          alt="star icon"
+        />
+        <p className="pl-2">{state?.voting}</p>
+      </div>
+
+      <SubmitButton />
     </form>
   );
 }

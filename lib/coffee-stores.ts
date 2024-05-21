@@ -34,11 +34,14 @@ export const fetchCoffeeStores = async (longLat: string, limit: number) => {
     const data = await response.json();
     const photos = await getListOfCoffeeStorePhotos();
 
-    return data.features.map((result: MapboxType, idx: number) =>
-      transformCoffeeData(idx, result, photos)
+    return (
+      data.features.map((result: MapboxType, idx: number) =>
+        transformCoffeeData(idx, result, photos)
+      ) || []
     );
   } catch (error) {
     console.error("Error while fetching coffee stores", error);
+    return [];
   }
 };
 
@@ -52,11 +55,13 @@ export const fetchCoffeeStore = async (id: string, queryId: string) => {
 
     console.log("queryId!: ", queryId!);
 
-    const coffeeStore = data.features.map((result: MapboxType, idx: number) =>
-      transformCoffeeData(parseInt(queryId), result, photos)
-    );
+    const coffeeStore =
+      data.features.map((result: MapboxType, idx: number) =>
+        transformCoffeeData(parseInt(queryId), result, photos)
+      ) || [];
     return coffeeStore.length > 0 ? coffeeStore[0] : {};
   } catch (error) {
     console.error("Error while fetching coffee stores", error);
+    return {};
   }
 };
