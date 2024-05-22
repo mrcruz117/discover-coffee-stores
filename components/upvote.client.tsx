@@ -35,7 +35,6 @@ export default function Upvote({ voting, id }: { voting: number; id: string }) {
     id,
     voting,
   };
-
   // @ts-expect-error
   const [state, dispatch] = useFormState(upvoteAction, initialState);
 
@@ -48,7 +47,7 @@ export default function Upvote({ voting, id }: { voting: number; id: string }) {
           height="24"
           alt="star icon"
         />
-        <p className="pl-2">{state?.voting}</p>
+        <p className="pl-2">{state?.voting ?? 0}</p>
       </div>
 
       <SubmitButton />

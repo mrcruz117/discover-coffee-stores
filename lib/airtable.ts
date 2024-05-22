@@ -70,6 +70,7 @@ export const updateCoffeeStore = async (id: string) => {
       if (records.length !== 0) {
         const record = records[0];
         const updatedVoting = record.voting + 1;
+
         const updatedRecords = await table.update([
           {
             id: record.recordId,
@@ -78,8 +79,9 @@ export const updateCoffeeStore = async (id: string) => {
             },
           },
         ]);
+
         if (updatedRecords.length > 0) {
-          console.log("Updated a store with id", id);
+          console.log("Created a store with id", id);
           return getMinifiedRecords(updatedRecords);
         }
       } else {
@@ -89,6 +91,6 @@ export const updateCoffeeStore = async (id: string) => {
       console.error("Store id is missing");
     }
   } catch (error) {
-    console.error("Error upvoting or finding a store", error);
+    console.error("Error upvoting a coffee store", error);
   }
 };
