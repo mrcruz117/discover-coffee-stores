@@ -53,6 +53,7 @@ export const fetchCoffeeStore = async (id: string, queryId: string) => {
     const data = await response.json();
     const photos = await getListOfCoffeeStorePhotos();
 
+    console.log("id!: ", id!);
     console.log("queryId!: ", queryId!);
 
     const coffeeStore =
