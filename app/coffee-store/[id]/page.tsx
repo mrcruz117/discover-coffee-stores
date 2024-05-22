@@ -53,6 +53,7 @@ export default async function Page(props: {
   params: { id: string };
   searchParams: { id: string };
 }) {
+  console.log("props: ", props);
   const {
     params: { id },
     searchParams: { id: queryId },
